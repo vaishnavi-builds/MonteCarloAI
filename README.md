@@ -38,7 +38,7 @@ This allows the AI to make **data-driven decisions instead of fixed rule-based m
 
 - HTML5  
 - CSS3  
-- JavaScript (Vanilla / or your framework if used)  
+- JavaScript  
 - Monte Carlo Simulation Algorithm  
 - Local Storage (for scoreboard persistence)  
 
@@ -56,8 +56,6 @@ This allows the AI to make **data-driven decisions instead of fixed rule-based m
 ---
 
 ## 📸 Features Preview
-
-> Add screenshots or GIFs here (recommended)
 
 Example:
 - Game Board UI  

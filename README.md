@@ -57,6 +57,12 @@ This allows the AI to make **data-driven decisions instead of fixed rule-based m
 
 ## 📸 Features Preview
 
+## 🎥 Demo Video
+
+Click below to watch the project demo:
+
+👉 https://github.com/user-attachments/assets/531e9dd1-ba09-43d7-b426-4c5fe4d3b8ee
+
 Example:
 - Game Board UI  
 - AI Heatmap Visualization  

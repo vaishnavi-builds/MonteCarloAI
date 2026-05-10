@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Monte Carlo Tic Tac Toe</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+    color:white;
+    text-align:center;
+    min-height:100vh;
+    overflow-x:hidden;
+}
+
+h1{
+    margin-top:15px;
+
+    font-size:50px;
+
+    font-weight:bold;
+
+    letter-spacing:1px;
+
+    text-shadow:0 4px 10px rgba(0,0,0,0.4);
+}
+
+.subtitle{
+    color:#dcdcdc;
+    margin-bottom:20px;
+}
+
+.controls{
+    margin-top:20px;
+}
+
+button{
+    padding:12px 20px;
+
+    margin:6px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:linear-gradient(135deg,#00c6ff,#0072ff);
+
+    color:white;
+
+    font-size:15px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:0.3s;
+
+    box-shadow:0 4px 12px rgba(0,0,0,0.3);
+}
+
+button:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:0 6px 18px rgba(0,0,0,0.4);
+}
+
+button:hover{
+    background:#0072ff;
+    transform:scale(1.05);
+}
+
+.board{
+    display:grid;
+    grid-template-columns:repeat(3,120px);
+    gap:12px;
+    justify-content:center;
+    margin:40px auto;
+
+    padding:20px;
+
+    background:rgba(255,255,255,0.08);
+
+    backdrop-filter:blur(10px);
+
+    border-radius:20px;
+
+    width:max-content;
+
+    box-shadow:0 8px 32px rgba(0,0,0,0.3);
+}
+
+.cell{
+    width:120px;
+    height:120px;
+
+    background:rgba(255,255,255,0.9);
+
+    color:#111;
+
+    font-size:50px;
+
+    font-weight:bold;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:15px;
+
+    cursor:pointer;
+
+    transition:0.3s;
+
+    box-shadow:0 4px 10px rgba(0,0,0,0.2);
+}
+
+.cell:hover{
+
+    transform:scale(1.05);
+
+    background:white;
+}
+
+.cell:hover{
+    background:#e6e6e6;
+}
+
+.stats{
+    margin-top:25px;
+}
+
+#status{
+    font-size:28px;
+
+    font-weight:bold;
+
+    margin-top:15px;
+
+    color:#00e5ff;
+}
+
+.scoreboard{
+
+    margin-top:20px;
+
+    font-size:22px;
+
+    background:rgba(255,255,255,0.08);
+
+    width:max-content;
+
+    margin-left:auto;
+
+    margin-right:auto;
+
+    padding:15px 25px;
+
+    border-radius:15px;
+
+    backdrop-filter:blur(10px);
+}
+
+.footer{
+    margin-top:30px;
+    color:#cccccc;
+    font-size:14px;
+}
+
+@media(max-width:500px){
+
+    .board{
+        grid-template-columns:repeat(3,90px);
+    }
+
+    .cell{
+        width:90px;
+        height:90px;
+        font-size:40px;
+    }
+}
+
+.light-mode{
+    background: linear-gradient(135deg,#f5f7fa,#c3cfe2);
+    color: black;
+}
+
+.light-mode .cell{
+    background: white;
+    color: black;
+}
+
+.light-mode .cell:hover{
+    background: #dddddd;
+}
+
+.light-mode button{
+    background: #6c5ce7;
+}
+
+.light-mode button:hover{
+    background: #4834d4;
+}
+
+.light-mode .subtitle,
+.light-mode .footer{
+    color: #333333;
+}
+
+.top-bar{
+    width:100%;
+    display:flex;
+    justify-content:flex-end;
+    padding:15px 20px;
+    box-sizing:border-box;
+}
+
+.restart-btn{
+    margin-top:25px;
+    background:#ff4757;
+}
+
+.restart-btn:hover{
+    background:#e84118;
+}
+
+.top-right{
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    padding:20px;
+    flex-wrap:wrap;
+}
+
+.active-level{
+    background:#ff4757 !important;
+    color:white;
+    transform:scale(1.08);
+}
+
+.controls{
+    margin-top:40px;
+}
+
+.board{
+    margin-top:40px;
+}
+
+@media(max-width:1000px){
+
+    h1{
+        font-size:38px;
+        padding:0 20px;
+    }
+
+    .top-right{
+        position:static;
+        justify-content:center;
+        margin-top:20px;
+    }
+}
+
+@media(max-width:900px){
+
+    .top-right{
+        justify-content:center;
+    }
+
+    h1{
+        font-size:34px;
+    }
+}
+
+body{
+    overflow-x:hidden;
+}
+
+.board,
+.scoreboard,
+button{
+    animation:fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn{
+
+    from{
+        opacity:0;
+        transform:translateY(20px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+.probability{
+
+    position:absolute;
+
+    bottom:6px;
+
+    right:6px;
+
+    font-size:13px;
+
+    font-weight:bold;
+
+    padding:3px 6px;
+
+    border-radius:8px;
+
+    color:white;
+}
+.cell{
+
+    position:relative;
+}
+
+.winner{
+
+    background:#2ecc71 !important;
+
+    color:white !important;
+
+    animation:pulse 1s infinite;
+
+    box-shadow:0 0 20px #2ecc71;
+}
+
+@keyframes pulse{
+
+    0%{
+        transform:scale(1);
+    }
+
+    50%{
+        transform:scale(1.08);
+    }
+
+    100%{
+        transform:scale(1);
+    }
+}
+
+@keyframes pulse{
+
+    0%{
+        transform:scale(1);
+    }
+
+    50%{
+        transform:scale(1.08);
+    }
+
+    100%{
+        transform:scale(1);
+    }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<body>
+
+<div class="top-right">
+
+    <button id="themeBtn" onclick="toggleTheme()">
+        🌙 Dark Mode
+    </button>
+
+    <button onclick="setMode('pvp')">
+        Player vs Player
+    </button>
+
+    <button onclick="setMode('ai')">
+        Player vs AI
+    </button>
+
+</div>
+
+<h1>
+Probabilistic Game Decision Simulator
+</h1>
+
+<p class="subtitle">
+Monte Carlo Tic Tac Toe AI
+</p>
+
+<div class="controls">
+
+    <button id="easyBtn" onclick="setDifficulty(200)">
+        Easy
+    </button>
+
+    <button id="mediumBtn" onclick="setDifficulty(1000)">
+        Medium
+    </button>
+
+    <button id="hardBtn" onclick="setDifficulty(5000)">
+        Hard
+    </button>
+
+</div>
+
+<div class="board" id="board"></div>
+
+<button class="restart-btn" onclick="resetGame()">
+    Restart Game
+</button>
+
+<div class="stats">
+
+    <p id="status">
+        Your Turn (X)
+    </p>
+
+    <p id="simulationText">
+        Difficulty: Medium | Simulations: 1000
+    </p>
+
+</div>
+
+<div class="scoreboard">
+
+    <p>
+        Player:
+        <span id="playerScore">0</span>
+
+        |
+
+        AI:
+        <span id="aiScore">0</span>
+
+        |
+
+        Draws:
+        <span id="drawScore">0</span>
+    </p>
+
+</div>
+
+<div class="footer">
+Monte Carlo Based AI Decision Making
+</div>
+
+<audio id="clickSound" src="click.mp3"></audio>
+
+<audio id="winSound" src="win.mp3"></audio>
+
+<audio id="drawSound" src="draw.mp3"></audio>
+
+<script>
+
+let board =
+["","","","","","","","",""];
+
+let gameMode = "ai";
+
+let currentPlayer = "X";
+
+let simulations = 1000;
+
+let gameOver = false;
+
+let moveProbabilities = {};
+let winningCells = [];
+let playerScore = 0;
+let aiScore = 0;
+let drawScore = 0;
+
+function setDifficulty(num){
+
+    simulations = num;
+
+    let level = "";
+
+    document.getElementById("easyBtn")
+    .classList.remove("active-level");
+
+    document.getElementById("mediumBtn")
+    .classList.remove("active-level");
+
+    document.getElementById("hardBtn")
+    .classList.remove("active-level");
+
+    if(num === 200){
+
+        level = "Easy";
+
+        document.getElementById("easyBtn")
+        .classList.add("active-level");
+    }
+
+    else if(num === 1000){
+
+        level = "Medium";
+
+        document.getElementById("mediumBtn")
+        .classList.add("active-level");
+    }
+
+    else{
+
+        level = "Hard";
+
+        document.getElementById("hardBtn")
+        .classList.add("active-level");
+    }
+
+    document.getElementById("simulationText")
+    .innerText =
+    "Difficulty: " + level +
+    " | Simulations: " + simulations;
+}
+
+function createBoard(){
+
+    const boardDiv =
+    document.getElementById("board");
+
+    boardDiv.innerHTML = "";
+
+    board.forEach((cell,index)=>{
+
+        const div =
+        document.createElement("div");
+
+        div.classList.add("cell");
+
+        // WINNER HIGHLIGHT
+        if(winningCells.includes(index)){
+
+            div.classList.add("winner");
+        }
+
+        div.innerText = cell;
+
+        div.onclick = function(){
+
+            playerMove(index);
+        };
+
+        // HEATMAP
+        if(cell === "" &&
+           moveProbabilities[index] !== undefined){
+
+            const prob =
+            document.createElement("div");
+
+            prob.classList.add("probability");
+
+            let value =
+            moveProbabilities[index];
+
+            prob.innerText = value + "%";
+
+            if(value >= 70){
+
+                prob.style.background =
+                "#2ecc71";
+            }
+
+            else if(value >= 40){
+
+                prob.style.background =
+                "#f1c40f";
+
+                prob.style.color =
+                "black";
+            }
+
+            else{
+
+                prob.style.background =
+                "#e74c3c";
+            }
+
+            div.appendChild(prob);
+        }
+
+        boardDiv.appendChild(div);
+    });
+}
+
+function playerMove(index){
+
+    if(board[index] !== "" || gameOver){
+
+        return;
+    }
+
+    let click =
+    document.getElementById("clickSound");
+
+    click.currentTime = 0;
+
+    click.play();
+
+    board[index] = currentPlayer;
+
+    createBoard();
+
+    if(checkWinner(board,currentPlayer,true)){
+
+        if(currentPlayer === "X"){
+
+            playerScore++;
+        }
+
+        else{
+
+            aiScore++;
+        }
+
+        updateScores();
+
+        endGame(currentPlayer + " Wins!");
+
+        return;
+    }
+
+    if(isDraw()){
+
+        drawScore++;
+
+        updateScores();
+
+        endGame("Draw!");
+
+        return;
+    }
+
+    // PLAYER VS PLAYER MODE
+    if(gameMode === "pvp"){
+
+        currentPlayer =
+        currentPlayer === "X" ? "O" : "X";
+
+        document.getElementById("status")
+        .innerText =
+        "Player " + currentPlayer + " Turn";
+    }
+
+    // PLAYER VS AI MODE
+    else{
+
+        document.getElementById("status")
+        .innerText =
+        "AI Thinking...";
+
+        setTimeout(aiMove,500);
+    }
+}
+
+function aiMove(){
+
+    let randomChance = 0;
+
+    if(simulations === 200){
+
+        randomChance = 0.5;
+    }
+
+    else if(simulations === 1000){
+
+        randomChance = 0.2;
+    }
+
+    else{
+
+        randomChance = 0.05;
+    }
+
+    let bestMove;
+
+    if(Math.random() < randomChance){
+
+        let moves =
+        getAvailableMoves(board);
+
+        bestMove =
+        moves[Math.floor(Math.random()*moves.length)];
+    }
+
+    else{
+
+        bestMove =
+        monteCarloBestMove("O");
+    }
+
+    if(bestMove !== null){
+
+        board[bestMove] = "O";
+    }
+
+    createBoard();
+
+    if(checkWinner(board,"O",true)){
+
+        aiScore++;
+
+        updateScores();
+
+        endGame("AI Wins!");
+
+        return;
+    }
+
+    if(isDraw()){
+
+        drawScore++;
+
+        updateScores();
+
+        endGame("Draw!");
+
+        return;
+    }
+
+    document.getElementById("status")
+    .innerText = "Your Turn (X)";
+}
+
+function monteCarloBestMove(player){
+
+    let available =
+    getAvailableMoves(board);
+
+    let bestMove = null;
+
+    let bestScore = -1;
+
+    moveProbabilities = {};
+
+    available.forEach(move=>{
+
+        let wins = 0;
+
+        for(let i=0;i<simulations;i++){
+
+            let tempBoard = [...board];
+
+            tempBoard[move] = player;
+
+            let result =
+            randomPlayout(tempBoard,"X");
+
+            if(result === player){
+
+                wins++;
+            }
+        }
+
+        let probability =
+        Math.floor((wins/simulations)*100);
+
+        moveProbabilities[move] =
+        probability;
+
+        let score =
+        wins + Math.random();
+
+        if(score > bestScore){
+
+            bestScore = score;
+
+            bestMove = move;
+        }
+    });
+
+    createBoard();
+
+    return bestMove;
+}
+
+function randomPlayout(tempBoard,currentPlayer){
+
+    while(true){
+
+        if(checkWinner(tempBoard,"X")){
+
+            return "X";
+        }
+
+        if(checkWinner(tempBoard,"O")){
+
+            return "O";
+        }
+
+        if(getAvailableMoves(tempBoard).length === 0){
+
+            return "Draw";
+        }
+
+        let moves =
+        getAvailableMoves(tempBoard);
+
+        let move =
+        moves[Math.floor(Math.random()*moves.length)];
+
+        tempBoard[move] = currentPlayer;
+
+        currentPlayer =
+        currentPlayer === "X" ? "O" : "X";
+    }
+}
+
+function checkWinner(b, player, realGame = false){
+
+    const wins = [
+
+        [0,1,2],
+        [3,4,5],
+        [6,7,8],
+
+        [0,3,6],
+        [1,4,7],
+        [2,5,8],
+
+        [0,4,8],
+        [2,4,6]
+    ];
+
+    for(let combo of wins){
+
+        if(combo.every(index =>
+            b[index] === player)){
+
+            // SAVE ONLY REAL GAME WIN
+            if(realGame){
+
+                winningCells = combo;
+            }
+
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function getAvailableMoves(b){
+
+    return b
+    .map((val,i)=>
+
+        val === "" ? i : null
+    )
+
+    .filter(v=>v !== null);
+}
+
+function isDraw(){
+
+    return getAvailableMoves(board).length === 0;
+}
+
+function endGame(message){
+
+    gameOver = true;
+
+    createBoard();
+
+    document.getElementById("status")
+    .innerText = message;
+
+    if(message.includes("Win")){
+
+        let win =
+        document.getElementById("winSound");
+
+        win.currentTime = 0;
+
+        win.play();
+    }
+
+    else if(message.includes("Draw")){
+
+        let draw =
+        document.getElementById("drawSound");
+
+        draw.currentTime = 0;
+
+        draw.play();
+    }
+}
+
+function updateScores(){
+
+    document.getElementById("playerScore")
+    .innerText = playerScore;
+
+    document.getElementById("aiScore")
+    .innerText = aiScore;
+
+    document.getElementById("drawScore")
+    .innerText = drawScore;
+}
+
+function resetGame(){
+
+    board =
+    ["","","","","","","","",""];
+
+    winningCells = [];
+
+    gameOver = false;
+
+    currentPlayer = "X";
+
+    if(gameMode === "pvp"){
+
+        document.getElementById("status")
+        .innerText =
+        "Player X Turn";
+    }
+
+    else{
+
+        document.getElementById("status")
+        .innerText =
+        "Your Turn (X)";
+    }
+
+    createBoard();
+}
+
+function toggleTheme(){
+
+    document.body.classList.toggle("light-mode");
+
+    let btn =
+    document.getElementById("themeBtn");
+
+    if(document.body.classList.contains("light-mode")){
+
+        btn.innerText = "☀️ Light Mode";
+    }
+
+    else{
+
+        btn.innerText = "🌙 Dark Mode";
+    }
+}
+
+function setMode(mode){
+
+    gameMode = mode;
+
+    resetGame();
+
+    if(mode === "pvp"){
+
+        document.getElementById("status")
+        .innerText =
+        "Player X Turn";
+    }
+
+    else{
+
+        document.getElementById("status")
+        .innerText =
+        "Your Turn (X)";
+    }
+}
+
+setDifficulty(1000);
+
+createBoard();
+
+</script>
+
+</body>
+</html>
